@@ -21,6 +21,7 @@ struct Cell {
     r: u8,
     g: u8,
     b: u8,
+    back: sdl2::pixels::Color,
     on: bool,
 }
 
@@ -53,6 +54,12 @@ impl Cell {
         self.g = green;
         self.b = blue;
     }
+    fn background_color(self) -> sdl2::pixels::Color {
+        self.back
+    }
+    fn set_background_color(&mut self, r: u8, b: u8, g: u8) {
+        self.back = sdl2::pixels::Color::RGBA(r, g, b,255)
+    }
 }
 
 pub fn main() -> Result<(), String> {
@@ -76,6 +83,7 @@ pub fn main() -> Result<(), String> {
                 r: 255 as u8,
                 g: 255 as u8,
                 b: 255 as u8,
+                back: sdl2::pixels::Color::RGB(0, 0, 0),
                 on: false,
             });
         }
@@ -83,20 +91,10 @@ pub fn main() -> Result<(), String> {
 
     let mut canvas = window.into_canvas().build().unwrap();
     let texture_creator = canvas.texture_creator();
-
     let mut texture =
         texture_creator.load_texture(std::path::Path::new("./src/reasources/font1.png"))?;
-    canvas.set_draw_color(Color::RGB(0, 0, 0));
+    canvas.set_draw_color(Color::RGBA(0, 0, 0,255));
     canvas.copy(&texture, None, Some(Rect::new(100, 100, 256, 256)))?;
-    canvas.copy_ex(
-        &texture,
-        None,
-        Some(Rect::new(450, 100, 256, 256)),
-        0.0,
-        None,
-        false,
-        false,
-    )?;
     canvas.present();
     canvas.clear();
     let mut event_pump = sdl_context.event_pump().unwrap();
@@ -113,8 +111,16 @@ pub fn main() -> Result<(), String> {
         rands = rng.gen();
         screen[i].set_texture(rands);
         screen[i].set_color(rng.gen(), rng.gen(), rng.gen());
+        screen[i].set_background_color(rng.gen(), rng.gen(), rng.gen());
         //change texture randomly
         canvas.clear();
+        for _ in 0..2 {
+        for cell in screen.iter() {
+            canvas.set_draw_color(cell.background_color());
+            canvas.fill_rect(cell.pos());
+        }
+        }
+
         for cell in screen.iter() {
             texture.set_color_mod(cell.red(), cell.green(), cell.blue());
             canvas.copy(&texture, cell.texture(), cell.pos())?;
