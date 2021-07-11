@@ -1,0 +1,14 @@
+[package]
+name = "space_fortress"
+version = "0.1.0"
+authors = ["M-E T-Less <letres@github.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.6.1"
+[dependencies.sdl2]
+version =  "0.34"
+default-features = false
+features = ["image"]
