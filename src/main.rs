@@ -8,10 +8,7 @@ use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Rect;
 use std::time::Duration;
-//Some kinda render the cell to the window
-//load texture from bitmap or binary
 //autosize for shit png/ascii
-//everything same texture
 //something something chess maybe
 //
 
@@ -42,13 +39,19 @@ impl Cell {
     fn pos(self) -> Rect {
         self.posistion
     }
-    fn red(self) -> u8 {self.r}
-    fn green(self) -> u8 {self.g}
-    fn blue(self) -> u8 {self.b}
-    fn set_color(&mut self, red: u8, green : u8, blue:u8) {
-        self.r=red;
-        self.g=green;
-        self.b=blue;
+    fn red(self) -> u8 {
+        self.r
+    }
+    fn green(self) -> u8 {
+        self.g
+    }
+    fn blue(self) -> u8 {
+        self.b
+    }
+    fn set_color(&mut self, red: u8, green: u8, blue: u8) {
+        self.r = red;
+        self.g = green;
+        self.b = blue;
     }
 }
 
@@ -68,8 +71,8 @@ pub fn main() -> Result<(), String> {
             screen.push(Cell {
                 posistion: Rect::new(x * 10, y * 10, 10, 10),
                 texture_posistion: (x * y % 256) as u8,
-                x: 10 as u8,
-                y: 10 as u8,
+                x: 8 as u8,
+                y: 8 as u8,
                 r: 255 as u8,
                 g: 255 as u8,
                 b: 255 as u8,
@@ -83,7 +86,7 @@ pub fn main() -> Result<(), String> {
 
     let mut texture =
         texture_creator.load_texture(std::path::Path::new("./src/reasources/font1.png"))?;
-    canvas.set_draw_color(Color::RGB(255, 255, 255));
+    canvas.set_draw_color(Color::RGB(0, 0, 0));
     canvas.copy(&texture, None, Some(Rect::new(100, 100, 256, 256)))?;
     canvas.copy_ex(
         &texture,
