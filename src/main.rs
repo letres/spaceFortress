@@ -107,7 +107,6 @@ pub fn main() -> Result<(), String> {
         let prev_t = prev.elapsed();
         let now = std::time::Instant::now();
         prev = now;
-        i = (i + 1) % screen.len();
         rands = rng.gen();
         screen[i].set_texture(rands);
         screen[i].set_color(rng.gen(), rng.gen(), rng.gen());
@@ -138,6 +137,7 @@ pub fn main() -> Result<(), String> {
         }
         // The rest of the game loop goes here...
 
+        i = (i + 1) % screen.len();
         let t1 = now.elapsed();
         let now = std::time::Instant::now();
 
