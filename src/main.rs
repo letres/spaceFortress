@@ -58,7 +58,47 @@ impl Cell {
         self.back
     }
     fn set_background_color(&mut self, r: u8, b: u8, g: u8) {
-        self.back = sdl2::pixels::Color::RGBA(r, g, b,255)
+        self.back = sdl2::pixels::Color::RGBA(r, g, b, 255)
+    }
+}
+
+struct Panel {
+    data: Vec<Cell>,
+    size: (u16, u16),
+    font: (u8, u8),
+}
+
+impl Panel {
+    fn new(size: (u16, u16), font: (u8, u8)) -> Panel {
+        let mut screen = Vec::new();
+        for x in 0..size.0 {
+            for y in 0..size.1 {
+                screen.push(Cell {
+                    posistion: Rect::new(
+                        (x * font.0 as u16 ).into(),
+                        (y * font.1 as u16 ).into(),
+                        font.0 as u32,
+                        font.1 as u32,
+                    ),
+                    texture_posistion: 0 as u8,
+                    x: font.0 as u8,
+                    y: font.1 as u8,
+                    r: 255 as u8,
+                    g: 255 as u8,
+                    b: 255 as u8,
+                    back: sdl2::pixels::Color::RGB(0, 0, 0),
+                    on: false,
+                });
+            }
+        }
+        Panel {
+            data: screen,
+            size: size,
+            font: font,
+        }
+    }
+    fn panel(self) -> Vec<Cell> {
+        self.data
     }
 }
 
@@ -72,28 +112,13 @@ pub fn main() -> Result<(), String> {
         .build()
         .unwrap();
 
-    let mut screen = Vec::new();
-    for x in 0..80 {
-        for y in 0..60 {
-            screen.push(Cell {
-                posistion: Rect::new(x * 10, y * 10, 10, 10),
-                texture_posistion: (x * y % 256) as u8,
-                x: 8 as u8,
-                y: 8 as u8,
-                r: 255 as u8,
-                g: 255 as u8,
-                b: 255 as u8,
-                back: sdl2::pixels::Color::RGB(0, 0, 0),
-                on: false,
-            });
-        }
-    }
+    let mut screen = Panel::new((80, 60), (10, 10));
 
     let mut canvas = window.into_canvas().build().unwrap();
     let texture_creator = canvas.texture_creator();
     let mut texture =
         texture_creator.load_texture(std::path::Path::new("./src/reasources/font1.png"))?;
-    canvas.set_draw_color(Color::RGBA(0, 0, 0,255));
+    canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));
     canvas.copy(&texture, None, Some(Rect::new(100, 100, 256, 256)))?;
     canvas.present();
     canvas.clear();
@@ -108,19 +133,19 @@ pub fn main() -> Result<(), String> {
         let now = std::time::Instant::now();
         prev = now;
         rands = rng.gen();
-        screen[i].set_texture(rands);
-        screen[i].set_color(rng.gen(), rng.gen(), rng.gen());
-        screen[i].set_background_color(rng.gen(), rng.gen(), rng.gen());
+        screen.data[i].set_texture(rands);
+        screen.data[i].set_color(rng.gen(), rng.gen(), rng.gen());
+        screen.data[i].set_background_color(rng.gen(), rng.gen(), rng.gen());
         //change texture randomly
         canvas.clear();
         for _ in 0..2 {
-        for cell in screen.iter() {
-            canvas.set_draw_color(cell.background_color());
-            canvas.fill_rect(cell.pos());
-        }
+            for cell in screen.data.iter() {
+                canvas.set_draw_color(cell.background_color());
+                canvas.fill_rect(cell.pos());
+            }
         }
 
-        for cell in screen.iter() {
+        for cell in screen.data.iter() {
             texture.set_color_mod(cell.red(), cell.green(), cell.blue());
             canvas.copy(&texture, cell.texture(), cell.pos())?;
         }
@@ -137,7 +162,7 @@ pub fn main() -> Result<(), String> {
         }
         // The rest of the game loop goes here...
 
-        i = (i + 1) % screen.len();
+        i = (i + 1) % screen.data.len();
         let t1 = now.elapsed();
         let now = std::time::Instant::now();
 
