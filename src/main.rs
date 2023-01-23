@@ -107,12 +107,12 @@ pub fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("rust-sdl2 demo", 800, 600)
+        .window("SpaceFortressFactoryTransportTycoon", 800, 600)
         .position_centered()
         .build()
         .unwrap();
 
-    let mut screen = Panel::new((80, 60), (10, 10));
+    let mut screen = Panel::new((100, 75), (8, 8));
 
     let mut canvas = window.into_canvas().build().unwrap();
     let texture_creator = canvas.texture_creator();
@@ -138,13 +138,11 @@ pub fn main() -> Result<(), String> {
         screen.data[i].set_background_color(rng.gen(), rng.gen(), rng.gen());
         //change texture randomly
         canvas.clear();
-        for _ in 0..2 {
-            for cell in screen.data.iter() {
-                canvas.set_draw_color(cell.background_color());
-                canvas.fill_rect(cell.pos());
-            }
+        for cell in screen.data.iter() {
+            canvas.set_draw_color(cell.background_color());
+            canvas.fill_rect(cell.pos());
         }
-
+        //Render loop
         for cell in screen.data.iter() {
             texture.set_color_mod(cell.red(), cell.green(), cell.blue());
             canvas.copy(&texture, cell.texture(), cell.pos())?;
