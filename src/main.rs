@@ -166,9 +166,9 @@ pub fn main() -> Result<(), String> {
 
         canvas.present();
         canvas.window_mut().set_title(&format!(
-            "{:.4}s logic, {:.4}s present, {:.4}s overall",
+            "{:.4}s logic, {:.4}fps, {:.4}s overall",
             t1.as_secs_f32(),
-            now.elapsed().as_secs_f32(),
+            (1.0 / now.elapsed().as_secs_f32()) as i32,
             start.elapsed().as_secs_f32()
         ));
     }
